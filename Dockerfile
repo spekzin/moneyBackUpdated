@@ -1,6 +1,7 @@
 # Build stage
 FROM node:22-alpine AS build
 WORKDIR /app
+ENV DATABASE_URL="mysql://user:pass@localhost:3306/db"
 
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
@@ -13,6 +14,7 @@ RUN npm run build
 FROM node:22-alpine AS prod
 WORKDIR /app
 ENV NODE_ENV=production
+ENV DATABASE_URL="mysql://user:pass@localhost:3306/db"
 
 COPY package.json package-lock.json ./
 COPY --from=build /app/prisma ./prisma
