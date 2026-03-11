@@ -9,15 +9,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret:
-        process.env.JWT_SECRET ||
-        (() => {
-          if (process.env.NODE_ENV === 'production') {
-            throw new Error('JWT_SECRET is not set');
-          }
-
-          return 'default-secret-key';
-        })(),
+      secret: process.env.JWT_SECRET || 'default-secret-key',
       signOptions: { expiresIn: '7d' },
     }),
   ],
