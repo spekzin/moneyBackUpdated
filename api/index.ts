@@ -11,13 +11,8 @@ async function bootstrap(): Promise<Express> {
   const server = express();
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
-  const corsOrigins = (process.env.CORS_ORIGIN ?? '')
-    .split(',')
-    .map((o) => o.trim())
-    .filter(Boolean);
-
   app.enableCors({
-    origin: corsOrigins.length > 0 ? corsOrigins : true,
+    origin: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
@@ -29,6 +24,8 @@ async function bootstrap(): Promise<Express> {
       forbidNonWhitelisted: true,
     }),
   );
+
+  app.setGlobalPrefix('api');
 
   await app.init();
   return server;

@@ -5,16 +5,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for Angular frontend (configurable for deploy)
-  // Use CORS_ORIGIN as a comma-separated list, e.g.:
-  // CORS_ORIGIN="https://my-app.vercel.app,http://localhost:4200"
-  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:4200,http://localhost:4000')
-    .split(',')
-    .map((o) => o.trim())
-    .filter(Boolean);
-
   app.enableCors({
-    origin: corsOrigins,
+    origin: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
