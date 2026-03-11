@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  nome      String
+  foto      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receitas   Receita[]
+  despesas   Despesa[]
+  cartoes    Cartao[]
+  categorias Categoria[]
+}
+
+model Receita {
+  id        String   @id @default(uuid())
+  mes       String
+  valor     Float
+  descricao String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([mes])
+}
+
+model Despesa {
+  id             String   @id @default(uuid())
+  nome           String
+  descricao      String?
+  formaPagamento String
+  valor          Float
+  valorParcela   Float?
+  parcelas       Int?
+  parcelaAtual   Int?
+  dataCompra     String
+  mes            String
+  recorrente     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  cartaoId String?
+  cartao   Cartao? @relation(fields: [cartaoId], references: [id], onDelete: SetNull)
+
+  categoriaId String?
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([mes])
+}
+
+model Cartao {
+  id         String   @id @default(uuid())
+  nome       String
+  bandeira   String
+  ultimos4   String
+  limite     Float?
+  vencimento Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  despesas Despesa[]
+
+  @@index([userId])
+}
+
+model Categoria {
+  id        String   @id @default(uuid())
+  nome      String
+  icone     String?
+  cor       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  despesas Despesa[]
+
+  @@index([userId])
+}
